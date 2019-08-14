@@ -41,14 +41,12 @@ class CollectionPermissions extends React.Component<Props> {
     }
   }
 
-  handlePrivateChange = async (ev: SyntheticInputEvent<>) => {
-    console.log('handlePrivateChange');
+  handlePrivateChange = async (ev: SyntheticInputEvent<*>) => {
     const { collection } = this.props;
 
     try {
       this.isEdited = true;
       collection.private = ev.target.checked;
-      console.log(collection.private);
       await collection.save();
     } catch (err) {
       collection.private = !ev.target.checked;

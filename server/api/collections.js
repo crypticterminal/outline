@@ -5,7 +5,7 @@ import auth from '../middlewares/authentication';
 import pagination from './middlewares/pagination';
 import { presentCollection, presentUser, presentPolicies } from '../presenters';
 import { Collection, CollectionUser, Team, Event, User } from '../models';
-import { ValidationError, InvalidRequestError } from '../errors';
+import { ValidationError } from '../errors';
 import { exportCollections } from '../logistics';
 import { archiveCollection, archiveCollections } from '../utils/zip';
 import policy from '../policies';
@@ -71,16 +71,12 @@ router.post('collections.add_user', auth(), async ctx => {
   const collection = await Collection.findByPk(id);
   authorize(ctx.state.user, 'update', collection);
 
-  if (!collection.private) {
-    throw new InvalidRequestError('Collection must be private to add users');
-  }
-
   const user = await User.findByPk(userId);
   authorize(ctx.state.user, 'read', user);
 
-  await CollectionUser.create({
-    collectionId: id,
-    userId,
+  await CollectionUser.upsert({
+    collectionId: collection.id,
+    userId: user.id,
     permission,
     createdById: ctx.state.user.id,
   });
@@ -107,10 +103,6 @@ router.post('collections.remove_user', auth(), async ctx => {
 
   const collection = await Collection.findByPk(id);
   authorize(ctx.state.user, 'update', collection);
-
-  if (!collection.private) {
-    throw new InvalidRequestError('Collection must be private to remove users');
-  }
 
   const user = await User.findByPk(userId);
   authorize(ctx.state.user, 'read', user);

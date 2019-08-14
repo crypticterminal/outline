@@ -26,7 +26,6 @@ class Tooltip extends React.Component<Props> {
       className,
       ...rest
     } = this.props;
-    const Component = block ? 'div' : 'span';
 
     return (
       <StyledTippy
@@ -39,11 +38,17 @@ class Tooltip extends React.Component<Props> {
         inertia
         {...rest}
       >
-        <Component className={className}>{children}</Component>
+        <TooltipCentered as={block ? 'div' : 'span'} className={className}>
+          {children}
+        </TooltipCentered>
       </StyledTippy>
     );
   }
 }
+
+const TooltipCentered = styled.div`
+  text-align: center;
+`;
 
 const StyledTippy = styled(Tippy)`
   font-size: 13px;

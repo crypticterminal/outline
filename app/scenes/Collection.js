@@ -28,10 +28,12 @@ import CenteredContent from 'components/CenteredContent';
 import { ListPlaceholder } from 'components/LoadingPlaceholder';
 import Mask from 'components/Mask';
 import Button from 'components/Button';
+import Tooltip from 'components/Tooltip';
 import HelpText from 'components/HelpText';
 import DocumentList from 'components/DocumentList';
 import Subheading from 'components/Subheading';
 import PageTitle from 'components/PageTitle';
+import Avatar from 'components/Avatar';
 import Flex from 'shared/components/Flex';
 import Modal from 'components/Modal';
 import CollectionPermissions from 'scenes/CollectionPermissions';
@@ -190,6 +192,21 @@ class CollectionScene extends React.Component<Props> {
                     readOnly
                   />
                 )}
+
+                {collection.users.map(user => (
+                  <Tooltip
+                    tooltip={
+                      <React.Fragment>
+                        <strong>{user.name}</strong>
+                        <br />
+                        Maintainer
+                      </React.Fragment>
+                    }
+                    placement="bottom"
+                  >
+                    <Avatar src={user.avatarUrl} size={32} />
+                  </Tooltip>
+                ))}
 
                 {hasPinnedDocuments && (
                   <React.Fragment>

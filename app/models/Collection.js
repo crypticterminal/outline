@@ -1,6 +1,5 @@
 // @flow
-import invariant from 'invariant';
-import { map, without, pick, filter } from 'lodash';
+import { without, pick } from 'lodash';
 import { action, computed, observable } from 'mobx';
 import BaseModel from 'models/BaseModel';
 import Document from 'models/Document';
@@ -11,7 +10,6 @@ import type { NavigationNode } from 'types';
 export default class Collection extends BaseModel {
   @observable isSaving: boolean;
   @observable isLoadingUsers: boolean;
-  @observable userIds: string[] = [];
 
   id: string;
   name: string;
@@ -20,6 +18,7 @@ export default class Collection extends BaseModel {
   private: boolean;
   type: 'atlas' | 'journal';
   documents: NavigationNode[];
+  users: User[];
   createdAt: ?string;
   updatedAt: ?string;
   deletedAt: ?string;
@@ -48,34 +47,13 @@ export default class Collection extends BaseModel {
     return results;
   }
 
-  @computed
-  get users(): User[] {
-    return filter(this.store.rootStore.users.active, user =>
-      this.userIds.includes(user.id)
-    );
-  }
-
-  @action
-  async fetchUsers() {
-    this.isLoadingUsers = true;
-
-    try {
-      const res = await client.post('/collections.users', { id: this.id });
-      invariant(res && res.data, 'User data should be available');
-      this.userIds = map(res.data, user => user.id);
-      res.data.forEach(this.store.rootStore.users.add);
-    } finally {
-      this.isLoadingUsers = false;
-    }
-  }
-
   @action
   async addUser(user: User) {
     await client.post('/collections.add_user', {
       id: this.id,
       userId: user.id,
     });
-    this.userIds = this.userIds.concat(user.id);
+    this.users.push(user);
   }
 
   @action
@@ -84,7 +62,7 @@ export default class Collection extends BaseModel {
       id: this.id,
       userId: user.id,
     });
-    this.userIds = without(this.userIds, user.id);
+    this.users = without(this.users, user);
   }
 
   @action

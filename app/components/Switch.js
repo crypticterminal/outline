@@ -13,8 +13,7 @@ type Props = {
 function Switch({ width = 38, height = 20, label, ...props }: Props) {
   const component = (
     <Wrapper width={width} height={height}>
-      <HiddenInput type="checkbox" width={width} height={height} {...props} />
-      <Slider width={width} height={height} />
+      <input type="checkbox" width={width} height={height} {...props} />
     </Wrapper>
   );
 

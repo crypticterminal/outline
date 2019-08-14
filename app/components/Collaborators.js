@@ -63,11 +63,11 @@ class Collaborators extends React.Component<Props> {
           <React.Fragment key={user.id}>
             <AvatarPile
               tooltip={
-                <TooltipCentered>
+                <React.Fragment>
                   <strong>{user.name}</strong>
                   <br />
                   viewed {distanceInWordsToNow(new Date(lastViewedAt))} ago
-                </TooltipCentered>
+                </React.Fragment>
               }
               placement="bottom"
             >
@@ -90,13 +90,13 @@ class Collaborators extends React.Component<Props> {
           <React.Fragment key={user.id}>
             <AvatarPile
               tooltip={
-                <TooltipCentered>
+                <React.Fragment>
                   <strong>{user.name}</strong>
                   <br />
                   {createdAt === updatedAt ? 'published' : 'updated'}{' '}
                   {updatedBy.id === user.id &&
                     `${distanceInWordsToNow(new Date(updatedAt))} ago`}
-                </TooltipCentered>
+                </React.Fragment>
               }
               placement="bottom"
             >
@@ -119,10 +119,6 @@ class Collaborators extends React.Component<Props> {
     );
   }
 }
-
-const TooltipCentered = styled.div`
-  text-align: center;
-`;
 
 const AvatarPile = styled(Tooltip)`
   margin-right: -8px;

@@ -1,6 +1,7 @@
 // @flow
 import { Collection } from '../models';
 import naturalSort from '../../shared/utils/naturalSort';
+import { presentUser } from '.';
 
 type Document = {
   children: Document[],
@@ -31,7 +32,12 @@ export default function present(collection: Collection) {
     updatedAt: collection.updatedAt,
     deletedAt: collection.deletedAt,
     documents: undefined,
+    users: undefined,
   };
+
+  if (collection.users) {
+    data.users = collection.users.map(presentUser);
+  }
 
   if (collection.type === 'atlas') {
     // Force alphabetical sorting
