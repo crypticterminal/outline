@@ -1,6 +1,10 @@
 // @flow
 import compress from 'koa-compress';
-import { contentSecurityPolicy } from 'koa-helmet';
+import helmet, {
+  contentSecurityPolicy,
+  dnsPrefetchControl,
+  referrerPolicy,
+} from 'koa-helmet';
 import logger from 'koa-logger';
 import mount from 'koa-mount';
 import enforceHttps from 'koa-sslify';
@@ -101,16 +105,28 @@ if (process.env.NODE_ENV === 'development') {
 
 app.use(mount('/auth', auth));
 app.use(mount('/api', api));
-app.use(mount(routes));
 
+app.use(helmet());
 app.use(
   contentSecurityPolicy({
     directives: {
       defaultSrc: ["'self'"],
+      scriptSrc: [
+        "'self'",
+        "'unsafe-inline'",
+        "'unsafe-eval'",
+        'www.google-analytics.com',
+        'd2wy8f7a9ursnm.cloudfront.net',
+      ],
       styleSrc: ["'self'", "'unsafe-inline'"],
+      imgSrc: ['*', 'data:'],
+      frameSrc: ['*'],
     },
   })
 );
+app.use(dnsPrefetchControl({ allow: true }));
+app.use(referrerPolicy({ policy: 'no-referrer' }));
+app.use(mount(routes));
 
 /**
  * Production updates and anonymous analytics.
